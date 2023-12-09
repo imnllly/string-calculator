@@ -72,36 +72,30 @@ string calc_plus(string str1, string str2) {
 	return str_new;
 }
 
-string calc_minus(string str1, string str2) {
+
+
+string calc_minus(string str1, string str2, char min) {
 	int tsch1, tsch2, tsch3 = 0;
 	string str3 = "";
 	string str_new = "";
-	char min = ' ';
-	if (str1.size() < str2.size()) {
-		str3 = str1;
-		str1 = str2;
-		str2 = str3;
-		min = '-';
-	}
 	straight2(str1, str2);
 	str1 = itc_reverse_str(str1);
 	str2 = itc_reverse_str(str2);
 	long long len1 = str1.size();
 	long long len2 = str2.size();
-
 	int o = 0, j = 0, q = 0;
 	char r = ' ';
 	for (int i = 0; i < len1; i++) {
 		tsch1 = str1[i] - '0';
 		tsch2 = str2[i] - '0';
-		/*if (tsch1 >= tsch2) {
+		/* if (tsch1 >= tsch2) {
 			tsch3 = tsch1 - tsch2 - o;
 			o = 0;
 		}
 		else if (tsch2 > tsch1) {
 			tsch3 = tsch1 - tsch2 + o + 10;
 			o = 1;
-		} */
+		}  */
 		tsch3 = tsch1 - tsch2 - o + q;
 		q = 0;
 		if (tsch2 > tsch1) {
@@ -119,6 +113,16 @@ string calc_minus(string str1, string str2) {
 	}
 	str_new += min;
 	return str_new;
+}
+
+
+string proverka(string str1, string str2) {
+	char min = ' ';
+	if (str1.size() >= str2.size()) calc_minus(str1, str2, min);
+	else {
+		min = '-';
+		 return calc_minus(str2, str1, min);
+	}
 }
 
 int main()
@@ -158,19 +162,19 @@ int main()
 		else if ((str1[0] == '-') && (str2[0] != '-')) {
 			str1 = itc_reverse_str(str1);
 			str4 = itc_reverse_str(str4);
-			str = calc_minus(str4, str1);
-			cout << itc_reverse_str(str) << endl; // -a + b, работает
+			str = proverka(str4, str1);
+			cout << itc_reverse_str(str) << endl; // -a + b, НЕ работает 
 		}
 		else if ((str1[0] != '-') && (str2[0] == '-')) {
-			str = calc_minus(str1, str4);
-			cout << itc_reverse_str(str) << endl; // a + (-b), работает 
+			str = proverka(str1, str4);
+			cout << itc_reverse_str(str) << endl; // a + (-b), НЕ работает с a < b
 		}
 	}
 
 	else if (op == '-') {
 		if ((str1[0] != '-') && (str2[0] != '-')) {
-			str = calc_minus(str1, str2);
-			cout << itc_reverse_str(str) << endl; // a - b, работает
+			str = proverka(str1, str2);
+			cout << itc_reverse_str(str) << endl; // a - b, НЕ работает с a < b
 		}
 		else if ((str1[0] != '-') && (str2[0] == '-')) {
 			str1 = itc_reverse_str(str1);
@@ -187,8 +191,8 @@ int main()
 		else if ((str1[0] == '-') && (str2[0] == '-')) {
 			str3 = itc_reverse_str(str3);
 			str4 = itc_reverse_str(str4);
-			str = calc_minus(str4, str3);
-			cout << itc_reverse_str(str) << endl; // -a - (-b), работает
+			str = proverka(str4, str3);
+			cout << itc_reverse_str(str) << endl; // -a - (-b), НЕ работает
 		}
 	}
 	
