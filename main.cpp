@@ -12,7 +12,7 @@ string itc_reverse_str(string str) {
 		str2 += str[i];
 	}
 	return str2;
-}
+} // переворачивает строку
 
 
 
@@ -30,7 +30,7 @@ void straight(string& str1, string& str2) {
 		}
 	}
 
-}
+} // добивает длину для сложения
 
 void straight2(string& str1, string& str2) {
 	int len1 = str1.size();
@@ -46,7 +46,19 @@ void straight2(string& str1, string& str2) {
 		}
 	}
 
-}
+} // добивает длину для вычитания
+
+string maxx(string str1, string str2) {
+	if (str1.size() > str2.size()) return str1;
+	else if (str2.size() > str1.size()) return str2;
+	else {
+		for (int i = str1.size(); i >= 0; i--) {
+			if (str1[i] - '0' > str2[i] - '0') return str1;
+			else if (str2[i] - '0' > str1[i] - '0') return str2;
+		}
+	}
+	return str1;
+} // находит большее число
 
 string calc_plus(string str1, string str2) {
 	int tsch1, tsch2, tsch3 = 0;
@@ -70,17 +82,18 @@ string calc_plus(string str1, string str2) {
 	}
 	if (o == 1) str_new += '1';
 	return str_new;
-}
+} // сложение 
 
 
 
-string calc_minus(string str1, string str2, char min) {
+string calc_minus(string str1, string str2) {
 	int tsch1, tsch2, tsch3 = 0;
 	string str3 = "";
 	string str_new = "";
 	straight2(str1, str2);
 	str1 = itc_reverse_str(str1);
 	str2 = itc_reverse_str(str2);
+	//if (str1 == str2) return "0";
 	long long len1 = str1.size();
 	long long len2 = str2.size();
 	int o = 0, j = 0, q = 0;
@@ -88,17 +101,17 @@ string calc_minus(string str1, string str2, char min) {
 	for (int i = 0; i < len1; i++) {
 		tsch1 = str1[i] - '0';
 		tsch2 = str2[i] - '0';
-		/* if (tsch1 >= tsch2) {
+		if (tsch1 - o >= tsch2) {
 			tsch3 = tsch1 - tsch2 - o;
 			o = 0;
 		}
-		else if (tsch2 > tsch1) {
+		else if (tsch2 > tsch1 - o) {
 			tsch3 = tsch1 - tsch2 + o + 10;
 			o = 1;
-		}  */
-		tsch3 = tsch1 - tsch2 - o + q;
-		q = 0;
-		if (tsch2 > tsch1) {
+		}  
+		//tsch3 = tsch1 - tsch2 - o + q;
+		//q = 0;
+		/* if (tsch2 > tsch1) {
 			tsch3 += 10;
 			o = 1;
 			if ((tsch1 == 0 && tsch2 == 0) && (i != 0)) {
@@ -106,95 +119,58 @@ string calc_minus(string str1, string str2, char min) {
 				o = 1;
 			}
 		} 
-		else o = 0; 
+		else o = 0;  */
 		
 		r = tsch3 + '0';
 		str_new += r;
 	}
-	str_new += min;
 	return str_new;
-}
+} // вычитание
 
 
-string proverka(string str1, string str2) {
-	char min = ' ';
-	if (str1.size() >= str2.size()) calc_minus(str1, str2, min);
-	else {
-		min = '-';
-		 return calc_minus(str2, str1, min);
+string proverka(string str1, string str2, string str3, string str4, int op) {
+	int zn1 = 1, zn2 = 1;
+	string str_new = "";
+	if (str1[0] == '-') zn1 = -1;
+	if (str2[0] == '-') zn2 = -1;
+	str1 = itc_reverse_str(str1);
+	str2 = itc_reverse_str(str2);
+	str3 = itc_reverse_str(str3);
+	str4 = itc_reverse_str(str4);
+	if (zn1 == 1 && zn2 * op == 1) return itc_reverse_str(calc_plus(str1, str2)); // работает
+	if (zn1 == -1 && zn2 * op == -1) return itc_reverse_str(calc_plus(str3, str4) + "-"); // работает
+	if (maxx(str3, str4) == str3) {
+		if (zn1 == -1 && zn2 * op == 1) return itc_reverse_str(calc_minus(str3, str4) + "-");
+		if (zn1 == 1 && zn2 * op == -1) return itc_reverse_str(calc_minus(str3, str4));
+	}
+	if (maxx(str3, str4) == str4) {
+		if (zn1 == -1 && zn2 * op == 1) return itc_reverse_str(calc_minus(str4, str3));
+		if (zn1 == 1 && zn2 * op == -1) return itc_reverse_str(calc_minus(str4, str3) + "-");
 	}
 }
 
 int main()
 {
 	string str1, str, res, str2 = "";
-	char op = ' ';
+	int op = 0;
+	char ope = ' ';
 	setlocale(LC_ALL, "RU");
 	cout << "Введите число 1: ";
 	cin >> str1;
 	cout << "Введите число 2: ";
 	cin >> str2;
 	cout << "Введите операцию (+/-): ";
-	cin >> op;
+	cin >> ope;
 	string str3 = "";
 	string str4 = "";
+	if (ope == '+') op = 1;
+	else if (ope == '-') op = -1;
 	 if (str1[0] == '-') {
 		for (int i = 1; i < str1.size(); i++) str3 += str1[i];
-	}
+	} // убирает минус в первом числе
 	if (str2[0] == '-') {
 		for (int i = 1; i < str2.size(); i++) str4 += str2[i];
-	} 
-	if (op == '+') {
-		if ((str1[0] != '-') && (str2[0] != '-')) {
-			str1 = itc_reverse_str(str1);
-			str2 = itc_reverse_str(str2);
-			str = calc_plus(str1, str2);
-			cout << itc_reverse_str(str) << endl; // a + b, работает
-		}
-		else if ((str1[0] == '-') && (str2[0] == '-')) {
-			str3 = itc_reverse_str(str3);
-			str4 = itc_reverse_str(str4);
-			str = calc_plus(str3, str4);
-			str = itc_reverse_str(str);
-			str = '-' + str; 
-			cout << str << endl; // -a + -b, работает
-		}
-		else if ((str1[0] == '-') && (str2[0] != '-')) {
-			str1 = itc_reverse_str(str1);
-			str4 = itc_reverse_str(str4);
-			str = proverka(str4, str1);
-			cout << itc_reverse_str(str) << endl; // -a + b, НЕ работает 
-		}
-		else if ((str1[0] != '-') && (str2[0] == '-')) {
-			str = proverka(str1, str4);
-			cout << itc_reverse_str(str) << endl; // a + (-b), НЕ работает с a < b
-		}
-	}
-
-	else if (op == '-') {
-		if ((str1[0] != '-') && (str2[0] != '-')) {
-			str = proverka(str1, str2);
-			cout << itc_reverse_str(str) << endl; // a - b, НЕ работает с a < b
-		}
-		else if ((str1[0] != '-') && (str2[0] == '-')) {
-			str1 = itc_reverse_str(str1);
-			str4 = itc_reverse_str(str4);
-			str = calc_plus(str1, str4);
-			cout << itc_reverse_str(str) << endl; // a - (-b), работает
-		}
-		else if ((str1[0] == '-') && (str2[0] != '-')) {
-			str3 = itc_reverse_str(str3);
-			str2 = itc_reverse_str(str2);
-			str = calc_plus(str3, str2);
-			cout << '-' + itc_reverse_str(str) << endl; // -a - b, работает
-		}
-		else if ((str1[0] == '-') && (str2[0] == '-')) {
-			str3 = itc_reverse_str(str3);
-			str4 = itc_reverse_str(str4);
-			str = proverka(str4, str3);
-			cout << itc_reverse_str(str) << endl; // -a - (-b), НЕ работает
-		}
-	}
-	
+	} // убирает минус во втором числе
+	cout << proverka(str1, str2, str3, str4, op) << endl;
 		return 0;
 } 
